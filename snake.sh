@@ -14,6 +14,8 @@ CMD_RIGHT=4
 SNAKE_X=5
 SNAKE_Y=5
 SNAKE_DIR=0 # 0-R, 1-U, 2-L, 3-D
+SNAKE_TAIL=()
+SNAKE_LENGTH=5
 
 HEIGHT=30
 WIDTH=80
@@ -47,6 +49,8 @@ update_position() {
     SNAKE_Y=$(( $SNAKE_Y + $dy))
     if [[ $SNAKE_Y -lt 0 ]]; then SNAKE_Y=0; fi
     if [[ $SNAKE_Y -gt $HEIGHT ]]; then SNAKE_Y=$HEIGHT; fi
+
+    SNAKE_TAIL=($SNAKE_DIR ${SNAKE_TAIL[@]::$SNAKE_LENGTH})
 }
 
 update_screen_buffer() {
@@ -64,7 +68,19 @@ update_screen_buffer() {
     done
     sb+=(${CBL}$(repeat $WIDTH ${CB})${CBR})
 
-    putc $(($SNAKE_X+1)) $(($SNAKE_Y+1)) o sb
+    sx=$(($SNAKE_X+1))
+    sy=$(($SNAKE_Y+1))
+    putc $sx $sy o sb
+    
+    for (( i=0; i<${#SNAKE_TAIL[@]}; ++i)); do
+        case ${SNAKE_TAIL[$i]} in
+            0) ((sx-=1)) ;;
+            1) ((sy+=1)) ;;
+            2) ((sx+=1)) ;;
+            3) ((sy-=1)) ;;
+        esac
+        putc $sx $sy '.' sb
+    done
 
     screen_buffer=("${sb[@]}")
 }

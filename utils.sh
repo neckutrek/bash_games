@@ -11,8 +11,6 @@ repeat() {
 putc() {
     local -n arr=$4
     line="${arr[$2]}"
-    echo "$line"
     line="$(echo -n "$line" | sed 's/./'$3'/'$1)"
-    echo "$line"
     arr[$2]="$line"
 }
