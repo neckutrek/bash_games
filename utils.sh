@@ -7,3 +7,12 @@ dec_to_char() {
 repeat() {
     for (( i=0; i<$1; i++)); do echo -n "$2"; done
 }
+
+putc() {
+    local -n arr=$4
+    line="${arr[$2]}"
+    echo "$line"
+    line="$(echo -n "$line" | sed 's/./'$3'/'$1)"
+    echo "$line"
+    arr[$2]="$line"
+}

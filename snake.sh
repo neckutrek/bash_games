@@ -57,17 +57,15 @@ update_screen_buffer() {
         line=${CL}
         for (( x=0; x<$WIDTH; x++ ))
         do
-            if [[ $x -eq $SNAKE_X && $y -eq $SNAKE_Y ]]
-            then
-                line=${line}'o'
-            else
-                line=${line}' '
-            fi
+            line=${line}' '
         done
         line=${line}${CR}
         sb+=("${line}")
     done
     sb+=(${CBL}$(repeat $WIDTH ${CB})${CBR})
+
+    putc $(($SNAKE_X+1)) $(($SNAKE_Y+1)) o sb
+
     screen_buffer=("${sb[@]}")
 }
 
