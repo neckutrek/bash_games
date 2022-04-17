@@ -18,15 +18,15 @@ SNAKE_DIR=0 # 0-R, 1-U, 2-L, 3-D
 HEIGHT=30
 WIDTH=80
 
-screen_buffer=''
-CTL=$(dec_to_char 35)
-CT=$(dec_to_char 35)
-CTR=$(dec_to_char 35)
-CL=$(dec_to_char 35)
-CR=$(dec_to_char 35)
-CBL=$(dec_to_char 35)
-CB=$(dec_to_char 35)
-CBR=$(dec_to_char 35)
+screen_buffer=()
+CTL=$(dec_to_char 43)
+CT=$(dec_to_char 45)
+CTR=$(dec_to_char 43)
+CL=$(dec_to_char 124)
+CR=$(dec_to_char 124)
+CBL=$(dec_to_char 43)
+CB=$(dec_to_char 45)
+CBR=$(dec_to_char 43)
 
 update_position() {
     #local dx, dy
@@ -50,24 +50,25 @@ update_position() {
 }
 
 update_screen_buffer() {
-    sb=''
-    sb=${sb}${CTL}$(repeat $WIDTH ${CT})${CTR}'\n'
+    sb=()
+    sb+=(${CTL}$(repeat $WIDTH ${CT})${CTR})
     for (( y=0; y<$HEIGHT; y++ ))
     do
-        sb=${sb}${CL}
+        line=${CL}
         for (( x=0; x<$WIDTH; x++ ))
         do
             if [[ $x -eq $SNAKE_X && $y -eq $SNAKE_Y ]]
             then
-                sb=${sb}'o'
+                line=${line}'o'
             else
-                sb=${sb}' '
+                line=${line}' '
             fi
         done
-        sb=${sb}${CR}'\n'
+        line=${line}${CR}
+        sb+=("${line}")
     done
-    sb=${sb}${CBL}$(repeat $WIDTH ${CB})${CBR}
-    screen_buffer=$sb
+    sb+=(${CBL}$(repeat $WIDTH ${CB})${CBR})
+    screen_buffer=("${sb[@]}")
 }
 
 cmd_tick() {
@@ -114,7 +115,9 @@ controller() {
         read -rsn1 cmd
         ${commands[$cmd]}
         clear
-        echo -e "$screen_buffer"
+        for (( i=0; i<${#screen_buffer[@]}; ++i)); do
+            echo -e "${screen_buffer[$i]}"
+        done
     done
 }
 
